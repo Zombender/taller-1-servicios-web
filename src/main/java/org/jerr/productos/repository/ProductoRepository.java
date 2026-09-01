@@ -14,6 +14,7 @@ import java.util.Optional;
 @NoArgsConstructor
 public class ProductoRepository {
     private final List<Producto> productos = new ArrayList<>();
+    private static Long currentId = 1L;
 
     public List<Producto> findAll() {
         return productos;
@@ -27,6 +28,8 @@ public class ProductoRepository {
     }
 
     public Producto save(Producto producto) {
+        producto.setId(currentId);
+        currentId++;
         productos.add(producto);
         return producto;
     }
