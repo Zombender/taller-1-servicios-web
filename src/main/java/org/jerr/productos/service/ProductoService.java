@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductoService {
@@ -44,17 +45,16 @@ public class ProductoService {
 
     @Transactional
     public ProductoDTO update(Long id, ProductoDTO productoDTO) {
-        Producto existingProducto = getExistingProducto(id);
-        existingProducto.setNombre(productoDTO.nombre());
-        existingProducto.setPresentacion(productoDTO.presentacion());
-        existingProducto.setCategoria(productoDTO.categoria());
-        existingProducto.setDisponible(productoDTO.disponible());
-        return productoMapper.toDto(existingProducto);
+        Optional<Producto> updatedProducto = productoRepository.update(id, productoDTO);
+        if (updatedProducto.isPresent()) {
+            return productoMapper.toDto(updatedProducto.get());
+        } else {
+            throw new EntityNotFoundException("No se encontró producto con id: " + id);
+        }
     }
 
     @Transactional
     public void delete(Long id) {
-        Producto existingProducto = getExistingProducto(id);
-        productoRepository.delete(existingProducto);
+        productoRepository.delete(id);
     }
 }
